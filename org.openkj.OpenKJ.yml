@@ -1,19 +1,21 @@
 app-id: org.openkj.OpenKJ
 runtime: org.kde.Platform
-runtime-version: 5.15
+runtime-version: 5.15-24.08
 sdk: org.kde.Sdk
 command: openkj
-finish-args: 
+add-extensions:
+  org.freedesktop.Platform.ffmpeg-full:
+  org.freedesktop.Platform.GStreamer.gstreamer-vaapi:
+finish-args:
   - "--share=ipc"
   - "--socket=x11"
   - "--device=dri"
   - "--share=network"
-    #  - "--socket=wayland"
+  - "--socket=wayland"
   - "--socket=pulseaudio"
   - "--filesystem=host"
   - "--env=LADSPA_PATH=/app/lib/ladspa/"
   - "--env=QT_QPA_PLATFORM=xcb"
-  - "--env=GST_PLUGIN_PATH=/app/lib/codecs/lib/gstreamer-1.0"
   - "--env=PATH=/app/lib/totem-pl-parser/bin/:/app/lib/codecs/bin/:/app/bin:/usr/bin"
 modules:
   - name: liba52
@@ -25,8 +27,8 @@ modules:
       - "/bin/*a52*"
     sources:
       - type: archive
-        url: "http://liba52.sourceforge.net/files/a52dec-0.7.4.tar.gz"
-        sha256: a21d724ab3b3933330194353687df82c475b5dfb997513eef4c25de6c865ec33
+        url: "https://github.com/Distrotech/a52dec/archive/6cb8ac785c7b46671598e2061e704fdc61738727.tar.gz"
+        sha256: 9200e212ba6838590e7d8ece2781014017f10739624b52e4bc92fe4185469b50
       - type: patch
         path: patches/a52dec-0.7.4-rpath64.patch
       - type: patch
@@ -56,18 +58,6 @@ modules:
         commands:
           - "autoreconf -fiv"
         dest-filename: autogen.sh
-  - name: gst-plugins-ugly
-    buildsystem: meson
-    config-opts:
-      - "-Dmpeg2dec=enabled"
-    sources:
-      - type: git
-        url: "https://gitlab.freedesktop.org/gstreamer/gst-plugins-ugly.git"
-        tag: 1.16.3
-        commit: f25c41970a54590e9f6fc82406aeda377864f8d8
-    post-install:
-      - "mkdir -p /app/lib/codecs/lib/gstreamer-1.0"
-      - "mv /app/lib/gstreamer-1.0/*.so /app/lib/codecs/lib/gstreamer-1.0"
   - name: libass
     config-opts:
       - "--enable-shared"
@@ -81,92 +71,28 @@ modules:
         commands:
           - "autoreconf -fiv"
         dest-filename: autogen.sh
-  - name: ffmpeg
-    cleanup:
-      - "/lib/codecs/share/ffmpeg/examples"
-    config-opts:
-      - "--disable-debug"
-      - "--disable-doc"
-      - "--disable-static"
-      - "--enable-shared"
-      - "--enable-nonfree"
-      - "--enable-gpl"
-    sources:
-      - type: git
-        url: "https://git.ffmpeg.org/ffmpeg.git"
-        tag: n4.2.4
-        commit: f9f95ceebfbd7b7f43c1b7ad34e25d366e6e2d2b
-  - name: gst-libav
-    buildsystem: meson
-    config-opts:
-      - "-Ddoc=disabled"
-    sources:
-      - type: git
-        url: "https://gitlab.freedesktop.org/gstreamer/gst-libav.git"
-        tag: 1.16.3
-        commit: 6988bdb0482b18b7a9f0c9635217a93d5057a9ff
-      - type: patch
-        path: patches/gst-libav-stop-caching-codecs.patch
-    post-install:
-      - "mkdir -p /app/lib/codecs/lib/gstreamer-1.0"
-      - "mv /app/lib/gstreamer-1.0/*.so /app/lib/codecs/lib/gstreamer-1.0"
-  - name: gst-plugins-bad
-    buildsystem: meson
-    cleanup:
-      - "/bin/*webrtc*"
-      - "/bin/crossfade"
-      - "/bin/tsparser"
-      - "/bin/playout"
-    config-opts:
-      - "-Dopenh264=disabled"
-      - "-Dvdpau=disabled"
-      - "-Dvulkan=disabled"
-    sources:
-      - type: git
-        url: "https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad.git"
-        tag: 1.16.3
-        commit: ee8144e98b084d75ffabaef0ef3dca2af8d72061
-    post-install:
-      - "mkdir -p /app/lib/codecs/lib/gstreamer-1.0"
-      - "mv /app/lib/gstreamer-1.0/*.so /app/lib/codecs/lib/gstreamer-1.0"
-  - name: rubberband 
+  - name: rubberband
     buildsystem: meson
     sources:
       - type: git
         url: https://github.com/breakfastquay/rubberband.git
-        commit: f1acaf85d70dac991c835626fe768fc0a8d3cb52
-  - name: fmt 
+        tag: v4.0.0
+        commit: 1d95888bec3ae0a17c0c4af791810d5a63f6bc35
+  - name: taglib
     buildsystem: cmake-ninja
-    builddir: yes
     config-opts:
-      - "-DFMT_TEST=OFF"
-    sources:
-      - type: git
-        url: https://github.com/fmtlib/fmt.git
-        commit: 561834650aa77ba37b15f7e5c9d5726be5127df9
-  - name: spdlog 
-    buildsystem: cmake-ninja
-    builddir: yes
-    config-opts:
-      - "-DSPDLOG_BUILD_EXAMPLE=OFF"
-      - "-DSPDLOG_BUILD_TESTS=OFF"
-    sources:
-      - type: git
-        url: https://github.com/gabime/spdlog.git
-        commit: bee3e63e1bae8b4cd5e3ebd69fbf75f68e47996a
-  - name: taglib 
-    buildsystem: cmake-ninja
+      - "-DBUILD_TESTING=OFF"
+      - "-DBUILD_EXAMPLES=OFF"
     sources:
       - type: git
         url: https://github.com/taglib/taglib.git
-        commit: f58161511050ac6c060d28e75dcd5c5a3af7279c 
+        tag: v2.0.2
+        commit: e3de03501ff66221d1f1f971022b248d5b38ba06
   - name: OpenKJ
     buildsystem: cmake-ninja
+    config-opts:
+      - "-DSPDLOG_USE_BUNDLED=true"
     sources:
       - type: git
         url: https://github.com/openkj/openkj.git
-        commit: b5af306a7a40336705d5864dfcff907f15211245
-cleanup-commands:
-  - "mv /app/lib/liba52*.* /app/lib/codecs/lib/"
-  - "mv /app/lib/libass.* /app/lib/codecs/lib/"
-  - "mkdir -p /app/lib/ffmpeg"
+        commit: f116291e50f1fa46acf05135e164abd81d013ee0
