@@ -78,16 +78,6 @@ modules:
         url: https://github.com/breakfastquay/rubberband.git
         tag: v4.0.0
         commit: 1d95888bec3ae0a17c0c4af791810d5a63f6bc35
-  - name: taglib
-    buildsystem: cmake-ninja
-    config-opts:
-      - "-DBUILD_TESTING=OFF"
-      - "-DBUILD_EXAMPLES=OFF"
-    sources:
-      - type: git
-        url: https://github.com/taglib/taglib.git
-        tag: v2.0.2
-        commit: e3de03501ff66221d1f1f971022b248d5b38ba06
   - name: OpenKJ
     buildsystem: cmake-ninja
     config-opts:
