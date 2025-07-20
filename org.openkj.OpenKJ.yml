@@ -50,8 +50,8 @@ modules:
       - "/bin/*mpeg2*"
     sources:
       - type: archive
-        url: "https://github.com/cisco-open-source/libmpeg2/archive/refs/tags/upstream/0.5.1.tar.gz"
-        sha256: 5f2b9a9b52094492189f27d9c100ce84324369fcfca52a2000a932ac3a188247
+        url: "https://github.com/Distrotech/libmpeg2/archive/82f416d4504447a61bf1d49f69d67e895c25cc30.tar.gz"
+        sha256: c57f67a03e59aaa44565cb7352ccce73b6d99586f3dce638ad0a2d0289798441
       - type: patch
         path: patches/libmpeg2-inline.patch
       - type: script
