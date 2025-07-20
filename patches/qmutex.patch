@@ -1,0 +1,22 @@
+diff --git a/src/cdg/cdgappsrc.h b/src/cdg/cdgappsrc.h
+index 6debdeb2..ed447c8e 100644
+--- a/src/cdg/cdgappsrc.h
++++ b/src/cdg/cdgappsrc.h
+@@ -3,7 +3,7 @@
+
+ #include <gst/gst.h>
+ #include <gst/app/gstappsrc.h>
+-#include <QMutex>
++#include <QRecursiveMutex>
+ #include "cdgfilereader.h"
+ #include <spdlog/logger.h>
+
+@@ -15,7 +15,7 @@ private:
+
+     CdgFileReader *m_cdgFileReader { nullptr };
+     std::atomic<bool> g_appSrcNeedData { false };
+-    QMutex m_cdgFileReaderLock { QMutex(QMutex::Recursive) };
++       QRecursiveMutex m_cdgFileReaderLock{};
+
+     // AppSrc callbacks
+     static void cb_need_data(GstAppSrc *appsrc, guint unused_size, gpointer user_data);
