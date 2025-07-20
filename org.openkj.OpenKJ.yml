@@ -86,3 +86,5 @@ modules:
       - type: git
         url: https://github.com/openkj/openkj.git
         commit: f116291e50f1fa46acf05135e164abd81d013ee0
+      - type: patch
+        path: patches/qmutex.patch
